@@ -1,0 +1,12 @@
+{{outlet}}
+
+<button {{action 'addRecords' true }}>Add 100 nodes with property changes block</button>
+<button {{action 'addRecords' false }}>Add 100 nodes without property changes block</button>
+
+<ul>
+    {{#each model as |node|}}
+        <li>
+            {{node.title}} - total children: {{node.childNodes.length}}
+        </li>
+    {{/each}}
+</ul>
