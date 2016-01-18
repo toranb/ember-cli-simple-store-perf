@@ -5,41 +5,42 @@ export default Ember.Route.extend({
     store: inject('main'),
 
     offset: 1,
+    wat: true,
 
     model() {
-        return this.get('store').find('node', {parent: 0});
+        var filter = function(model) {
+            return model.get('parent') === 0;
+        };
+        return this.get('store').find('node', filter);
     },
 
     actions: {
-        addRecords(withPropertyChangesBlock) {
-            let offset = this.get('offset');
+        addRecords(huh) {
+            // let parent = (offset === 1) ? 0 : Math.floor(Math.random() * 999);
             let store = this.get('store');
-            let parent = (offset === 1) ? 0 : Math.floor(Math.random() * 999);
-            withPropertyChangesBlock = withPropertyChangesBlock || false;
+            let offset = this.get('offset');
+            // let parent = (this.get('wat') === true) ? 0 : 1;
+            let parent = 0;
+            let numz = (huh === true) ? 100 : 1000;
 
-            console.time('push element to store - ' + (withPropertyChangesBlock ? 'with' : 'without') + ' property changes block');
+            console.time('push element to store - without property changes block');
 
-            if (withPropertyChangesBlock) {
-                store.beginPropertyChanges();
-            }
+            Ember.run(function() {
+                for (let i = 0; i < numz; i++) {
+                    store.push('node', {
+                        'id': offset,
+                        'parent': parent,
+                        'title': `Title ${i}`
+                    });
+                    offset++;
+                }
+            });
 
-            for (let i = 0; i < 100; i++) {
-                store.push('node', {
-                    'id': offset,
-                    'parent': parent,
-                    'title': `Title ${i}`
-                });
-                offset++;
-            }
+            console.timeEnd('push element to store - without property changes block');
 
-            if (withPropertyChangesBlock) {
-                store.endPropertyChanges();
-            }
-
-            console.timeEnd('push element to store - ' + (withPropertyChangesBlock ? 'with' : 'without') + ' property changes block');
-
+            var newWat = (this.get('wat') === true) ? false : true;
             this.set('offset', offset);
+            this.set('wat', newWat);
         }
     }
-
 });

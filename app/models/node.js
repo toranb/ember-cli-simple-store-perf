@@ -4,27 +4,19 @@ import inject from 'ember-cli-injection/inject';
 
 export default Model.extend({
     store: inject('store')('main'),
-
-    parent: attr(0),
+    parent: attr(),
     title: attr(),
-
-    parentNode: Ember.computed('_parentNode.[]', function () {
-        let parentNode = this.get('_parentNode');
-
-        return parentNode ? parentNode.objectAt(0) : undefined;
-    }),
-
-    _parentNode: Ember.computed(function () {
+    parentNode: Ember.computed.alias('belongs_to.firstObject'),
+    belongs_to: Ember.computed(function () {
         return this.get('store').find('node', this.get('parent'));
     }),
-
-    childNodes: Ember.computed(function () {
-        let store = this.get('store');
+    nope: Ember.computed(function () {
+        console.log('do not call this plz');
         let id = this.get('id');
-        let filter = (node) => {
-            return id === node.get('parent');
-        };
-
-        return store.find('node', filter, ['parent']);
+        let store = this.get('store');
+        // let filter = (node) => {
+        //     return id === node.get('parent');
+        // };
+        return store.find('node', {parent: id});
     })
 });
